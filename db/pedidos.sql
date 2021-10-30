@@ -1,0 +1,1 @@
+select id_produto, quantidade from pedidos

@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 // Retorna todos os pedidos
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     res.status(200).send({
         mensagem: "Retornando consulta de todos os pedidos"
     })
 })
 
 // Insere um pedido
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
     const pedido = {
         id_produto: req.body.id_produto,
         quantidade: req.body.quantidade
@@ -22,7 +22,7 @@ router.post('/', (req, res, next) => {
 })
 
 // Retorna os dados de um produto específico
-router.get('/:id_produto', (req, res, next) => {
+router.get('/:id_produto', (req, res) => {
     const id = req.params.id_produto
 
     if (id === 'especial') {
@@ -43,14 +43,14 @@ router.get('/:id_produto', (req, res, next) => {
 })
 
 // Altera um pedido
-router.patch('/', (req, res, next) => {
+router.patch('/', (req, res) => {
     res.status(200).send({
         mensagem: "Pedido alterado com sucesso"
     })
 })
 
 // Deleta um produto
-router.delete('/', (req, res, next) => {
+router.delete('/', (req, res) => {
     res.status(200).send({
         mensagem: "Pedido excluído com sucesso"
     })
