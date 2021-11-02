@@ -73,30 +73,44 @@ router.get('/:id_pedido', (req, res) => {
 
 // Insere um pedido
 router.post('/', (req, res) => {
+
     mysql.getConnection((error, conn) => {
-        if (error) { return res.status(500).send({ error: "error ao abrir conexao com o banco de dados" }) }
-        conn.query(
-            `INSERT INTO pedidos (id_produto, quantidade) VALUES (?, ?)`,
-            [req.body.id_produto, req.body.quantidade],
+        if (error) { return res.status(500).send({ error: error }) }
+
+        conn.query('SELECT * FROM produtos WHERE id_produto = ?',
+            [req.body.id_produto],
             (error, result, fields) => {
-                conn.release();
-                if (error) { return res.status(500).send({ error: "error ao inserir pedido no banco de dados" }) }
-                const response = {
-                    mensagem: "Pedido inserido com sucesso",
-                    produtoCriado: {
-                        id_pedido: result.id_pedido,
-                        id_produto: req.body.id_produto,
-                        quantidade: req.body.quantidade,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna todos os pedidos',
-                            url: 'http://logcalhost:3000/pedidos'
-                        }
-                    }
+
+                if (error) { return res.status(500).send({ error: error }) }
+                if (result.length == 0) {
+                    return res.status(404).send({
+                        mensagem: "Produto não encontrado"
+                    })
                 }
-                return res.status(201).send(response)
-            }
-        )
+
+                conn.query(
+                    `INSERT INTO pedidos (id_produto, quantidade) VALUES (?, ?)`,
+                    [req.body.id_produto, req.body.quantidade],
+                    (error, result, fields) => {
+                        conn.release();
+                        if (error) { return res.status(500).send({ error: "error ao inserir pedido no banco de dados" }) }
+                        const response = {
+                            mensagem: "Pedido inserido com sucesso",
+                            produtoCriado: {
+                                id_pedido: result.id_pedido,
+                                id_produto: req.body.id_produto,
+                                quantidade: req.body.quantidade,
+                                request: {
+                                    tipo: 'GET',
+                                    descricao: 'Retorna todos os pedidos',
+                                    url: 'http://logcalhost:3000/pedidos'
+                                }
+                            }
+                        }
+                        return res.status(201).send(response)
+                    }
+                )
+            })
     })
 })
 
@@ -152,11 +166,11 @@ router.delete('/', (req, res) => {
                             tipo: 'POST',
                             descricao: 'Insere um pedido',
                             url: 'http:localhost:3000/pedidos',
-                            body:{
+                            body: {
                                 id_produto: 'Number',
                                 quantidade: 'Number'
                             }
-                        } 
+                        }
                     }
                 }
                 return res.status(202).send(response)
