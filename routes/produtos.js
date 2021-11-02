@@ -78,7 +78,7 @@ router.post('/', (req, res) => {
             (error, result, fields) => {
                 conn.release()
 
-                if (error) { return res.status(500).send({ mensagem: "Não foi retornado nenhum produto na consulta" }) }
+                if (error) { return res.status(500).send({ error: "error" }) }
                 const response = {
                     mensagem: "Produto inserido com sucesso",
                     produtoCriado: {
@@ -86,9 +86,9 @@ router.post('/', (req, res) => {
                         nome: req.body.nome,
                         preco: req.body.preco,
                         request: {
-                            tipo: 'POST',
-                            descricao: 'Insere um produto',
-                            url: 'http://logcalhost:3000'
+                            tipo: 'GET',
+                            descricao: 'Retorna todos os produtos',
+                            url: 'http://logcalhost:3000/produtos'
                         }
                     }
                 }
@@ -130,7 +130,7 @@ router.patch('/', (req, res) => {
     })
 })
 
-// Exclui um produto
+// Deleta um produto
 router.delete('/', (req, res) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: "error" }) }
@@ -149,7 +149,7 @@ router.delete('/', (req, res) => {
                         request: {
                             tipo: 'POST',
                             descricao: 'Insere um produto',
-                            url: 'http:localhost:3000/',
+                            url: 'http:localhost:3000/produtos',
                             body:{
                                 nome: 'String',
                                 preco: 'Number'

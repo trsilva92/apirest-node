@@ -1,1 +1,1 @@
-select id_produto, quantidade from pedidos
+describe pedidos;
