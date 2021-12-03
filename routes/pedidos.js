@@ -8,8 +8,14 @@ router.get('/', (req, res) => {
 
         if (error) { return res.status(500).send({ error: "error" }) }
 
-        conn.query(
-            `SELECT * FROM pedidos`,
+        conn.query(`SELECT pedidos.id_pedido, 
+                        pedidos.id_produto, 
+                        pedidos.quantidade, 
+                        produtos.nome, 
+                        produtos.preco
+                    FROM pedidos 
+                    INNER JOIN produtos 
+                    ON pedidos.id_produto = produtos.id_produto;`,
             (error, result) => {
                 conn.release()
 
@@ -20,8 +26,12 @@ router.get('/', (req, res) => {
                     pedidos: result.map(pedido => {
                         return {
                             "id_pedido": pedido.id_pedido,
-                            "id_produto": pedido.id_produto,
                             "quantidade": pedido.quantidade,
+                            produto: {
+                                "id_produto": pedido.id_produto,
+                                "nome": pedido.nome,
+                                "preco": pedido.preco
+                            },
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna os detalhes de um pedido específico',
@@ -73,7 +83,6 @@ router.get('/:id_pedido', (req, res) => {
 
 // Insere um pedido
 router.post('/', (req, res) => {
-
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) }
 
